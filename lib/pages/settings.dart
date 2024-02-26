@@ -11,7 +11,7 @@ import 'package:odyssey/utils/string_constants.dart';
 import 'package:odyssey/widget/show_connection.dart';
 
 import '../connection/SSH.dart';
-import '../providers/connection_providers.dart';
+import '../providers/providers.dart';
 import '../utils/theme.dart';
 
 class ConnectionScreen extends ConsumerStatefulWidget {
@@ -90,44 +90,33 @@ class _ConnectionScreenState extends ConsumerState<ConnectionScreen> {
         ),
 
         backgroundColor: ThemesDark().normalColor,
-        body: Padding(
-          padding: const EdgeInsets.all(40),
-          child: Column(
-            children: [
-              ShowConnection(status: isConnectedToLg),
-              customInput(ipController, "IP Address"),
-              customInput(usernameController, "Username"),
-              customInput(passwordController, "Password"),
-              customInput(portController, "Port"),
-              customInput(rigsController, "Rigs"),
-              ElevatedButton(
-                onPressed: () {
-                  updateProviders();
-                  if (!isConnectedToLg) _connectToLG();
-                },
-                child: Text('Connect to LG'),
+        body: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ShowConnection(status: isConnectedToLg),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(40),
+              child: Column(
+                children: [
+
+                  customInput(ipController, "IP Address"),
+                  customInput(usernameController, "Username"),
+                  customInput(passwordController, "Password"),
+                  customInput(portController, "Port"),
+                  customInput(rigsController, "Rigs"),
+                  ElevatedButton(
+                    onPressed: () {
+                      updateProviders();
+                      if (!isConnectedToLg) _connectToLG();
+                    },
+                    child: Text('Connect to LG'),
+                  ),
+                ],
               ),
-             /* AnimatedButton(
-                width: 200,
-                height: 70,
-                text: StringConstants.connectToLg,
-                isReverse: false,
-                selectedTextColor: Colors.black,
-                transitionType: TransitionType.LEFT_TO_RIGHT,
-                selectedBackgroundColor: Colors.green,
-                textStyle: const TextStyle(
-                    fontSize: 25,
-                    fontWeight: FontWeight.normal
-                ),
-                onPress: () {
-                  _cleanKml();
-                  _cleanBalloon();
-                  },
-                borderRadius: 50,
-                borderWidth: 2,
-              ),*/
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

@@ -2,8 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../connection/SSH.dart';
-import '../providers/connection_providers.dart';
-import 'NamePlaceBallon.dart';
+import '../providers/providers.dart';
+import 'Balloon.dart';
 
 class BalloonLoader {
   WidgetRef ref;
@@ -16,12 +16,12 @@ class BalloonLoader {
     required this.mounted,
   });
 
-  loadDashBoardBalloon() async {
+/*  loadDashBoardBalloon() async {
     print('Loading Dashboard Balloon');
-    /*var initialMapPosition = CameraPosition(
+    *//*var initialMapPosition = CameraPosition(
       target: ref.read(cityDataProvider)!.location,
       zoom: Const.appZoomScale,
-    );*/
+    );*//*
     ref.read(lastBalloonProvider.notifier).state = await SSH(ref: ref).renderInSlave(
       context,
       ref.read(rightmostRigProvider),
@@ -30,7 +30,7 @@ class BalloonLoader {
       print('Error: $onError');
     });
 
-  }
+  }*/
 
   loadKmlBalloon(String kmlName, String fileSize) async {
     String name = '<h3>Playing KML: $kmlName</h3>\n';

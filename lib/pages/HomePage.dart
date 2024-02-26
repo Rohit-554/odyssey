@@ -18,8 +18,8 @@ import 'package:odyssey/widget/show_connection.dart';
 
 import '../connection/SSH.dart';
 import '../kml/BaloonLoader.dart';
-import '../kml/NamePlaceBallon.dart';
-import '../providers/connection_providers.dart';
+import '../kml/Balloon.dart';
+import '../providers/providers.dart';
 import '../utils/constants.dart';
 import '../utils/theme.dart';
 
@@ -50,7 +50,6 @@ class _HomePageState extends ConsumerState<HomePage> with TickerProviderStateMix
 
 
   orbitPlay() async {
-    print("wrking");
     setState(() {
       orbitPlaying = true;
     });
@@ -62,7 +61,6 @@ class _HomePageState extends ConsumerState<HomePage> with TickerProviderStateMix
         return;
       }
       if (!orbitPlaying) {
-        print("thisiswokng");
         break;
       }
       SSH(ref: ref).flyToOrbit(
@@ -95,7 +93,7 @@ class _HomePageState extends ConsumerState<HomePage> with TickerProviderStateMix
   @override
   void initState() {
     super.initState();
-    _loadBalloon();
+    // _loadBalloon();
     _earthController = AnimationController(
       duration: const Duration(seconds: 5),
       vsync: this,
@@ -110,17 +108,17 @@ class _HomePageState extends ConsumerState<HomePage> with TickerProviderStateMix
     );
     _searchController = TextEditingController(text: '');
     _earthController.stop();
-    _moonController.stop();
-    _marsController.stop();
 
     SSH(ref: ref).flyTo(
         context,
-        40.730610,
-        -73.935242,
+        Const.latitude,
+        Const.longitude,
         11,
         0.0,
         0.0);
     SSH(ref:ref).initialConnect();
+
+    _earthController.repeat();
   }
 
 
@@ -130,11 +128,12 @@ class _HomePageState extends ConsumerState<HomePage> with TickerProviderStateMix
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     bool connected = ref.watch(connectedProvider);
+    bool isConnectedToLg = ref.watch(connectedProvider);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: ThemesDark().tabBarColor,
         title: Text(
-          "Voyager",
+          "Odyssey - LG Control Panel",
           style: TextStyle(color: ThemesDark().oppositeColor),
         ),
         actions: <Widget>[
@@ -152,89 +151,64 @@ class _HomePageState extends ConsumerState<HomePage> with TickerProviderStateMix
           )
         ],
       ),
-      body: Stack(
+      body: Column(
         children: [
-          Expanded(
-            child: CircularParticle(
-              key: UniqueKey(),
-              awayRadius: 60,
-              numberOfParticles: 600,
-              speedOfParticles: 1,
-              height: screenHeight,
-              width: screenWidth,
-              onTapAnimation: true,
-              particleColor: Colors.white.withAlpha(150),
-              awayAnimationDuration: Duration(milliseconds: 600),
-              maxParticleSize: 2,
-              isRandSize: true,
-              isRandomColor: true,
-              randColorList: [
-                Colors.white.withAlpha(50),
-                Colors.white.withAlpha(50),
-              ],
-              awayAnimationCurve: Curves.ease,
-              enableHover: true,
-              hoverColor: Colors.white.withAlpha(80),
-              hoverRadius: 90,
-              connectDots: false, //not recommended
-            ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ShowConnection(status: isConnectedToLg),
           ),
-          Center(
-            child: ListView(
-              children: <Widget>[
-                Container(
-                    key: connectedKey, child: ShowConnection(status: connected)),
-                Container(
-                  height: 400,
-                  width: 400,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          Expanded( // Wrap the Row with Expanded
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Lottie.asset(
+                        'assets/lottie/earthsat.json',
+                        controller: _earthController,
+                        height: 400, // Adjust height as needed
+                        width: 400, // Adjust width as needed
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      GestureDetector(
-                        child: Lottie.asset('assets/lottie/earth360.json',
-                            controller: _earthController),
-                        onTap: () {
-                         /* AllCityData.availableCities.map(
-                                (city) {
-                              ref.read(cityDataProvider.notifier).state = city;
-                            },
-                          ).toList();*/
-                          _earthController.repeat();
-                          _moonController.stop();
-                          _marsController.stop();
-                          _planetEarth();
-                        },
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          menuButton("Navigate To Kolkata", _navigateToKolkata),
+                          menuButton("play Orbit", _playOrbit),
+                        ],
+                      ),
+                      SizedBox(height: 40),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          menuButton("Display Overlay", _showOverlay),
+                          menuButton("Reboot LG", () {
+                            showAlertDialog(context, 1);
+                          }),
+                        ],
                       ),
                     ],
                   ),
                 ),
-                Container(
-                  height: 200,
-                  width: double.infinity,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      /*Container(
-                        key: navigateToLleidaKey,
-                        child: menuButton("Navigate To Kolkata", _execute),
-                      ),*/
-                      menuButton("Navigate To Durgapur", _navigateToDurgapur),
-                      menuButton("play Orbit", _playOrbit),
-                      menuButton("Display Html Bubble", _showOverlay),    //Todo: Display Html Bubble
-                      menuButton("Relaunch LG", () {
-                        showAlertDialog(context, 1);
-                      }),
-                    ],
-                  ),
-                ),
               ],
             ),
           ),
-
         ],
       ),
+
     );
   }
+
+
+
 
   @override
   void dispose() {
@@ -250,26 +224,53 @@ class _HomePageState extends ConsumerState<HomePage> with TickerProviderStateMix
       height: 150,
       width: 200,
       padding: EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(40.0),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFF001F5C), // Dark blue
+            Color(0xFF253773), // Deep blue
+            Color(0xFF161D3F), // Dark purple
+          ],
+          stops: [0.1, 0.5, 0.9],
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            spreadRadius: 2,
+            blurRadius: 4,
+            offset: Offset(0, 3), // changes position of shadow
+          ),
+        ],
+      ),
       child: ElevatedButton(
-          style: ButtonStyle(
-              backgroundColor:
-                  MaterialStateProperty.all(ThemesDark().tabBarColor),
-              foregroundColor:
-                  MaterialStateProperty.all(ThemesDark().oppositeColor),
-              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                  RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(40.0)))),
-          onPressed: () {
-            onPressed();
-
-          },
-          child: Text(
-            text,
-            style: TextStyle(fontSize: 20),
-            textAlign: TextAlign.center,
-          )),
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all(Colors.transparent),
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(40.0),
+            ),
+          ),
+        ),
+        onPressed: () {
+          onPressed();
+        },
+        child: Text(
+          text,
+          style: TextStyle(
+            fontSize: 20,
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ),
     );
   }
+
+
 
   showAlertDialog(BuildContext context, int ind) {
     Widget cancelButton = TextButton(
@@ -323,11 +324,11 @@ class _HomePageState extends ConsumerState<HomePage> with TickerProviderStateMix
     });
   }
 
-  Future<void> _loadBalloon() async {
+/*  Future<void> _loadBalloon() async {
     await BalloonLoader(ref: ref, mounted: mounted, context: context)
         .loadDashBoardBalloon();
     ref.read(isLoadingProvider.notifier).state = false;
-  }
+  }*/
 
  Future<void> _cleanKml() async {
     SSHSession? session = await SSH(ref: ref).cleanKML(context);
@@ -345,7 +346,7 @@ class _HomePageState extends ConsumerState<HomePage> with TickerProviderStateMix
       print('Session is null');
     }
   }
-  
+
   Future<void> _cleanBalloon() async {
     SSHSession? session = await SSH(ref: ref).cleanBalloon(context);
     if (session != null) {
@@ -360,8 +361,8 @@ class _HomePageState extends ConsumerState<HomePage> with TickerProviderStateMix
     }
   }
 
-  Future<void> _navigateToDurgapur() async {
-    SSHSession? session = await SSH(ref: ref).search("Department of Computer Science, NIT Durgapur,Kolkata");
+  Future<void> _navigateToKolkata() async {
+    SSHSession? session = await SSH(ref: ref).search("sec V,Kolkata");
     if (session != null) {
       print(session.stdout);
     }
@@ -377,32 +378,12 @@ class _HomePageState extends ConsumerState<HomePage> with TickerProviderStateMix
     }*/
   }
 
-  Future<void> _planetEarth() async {
-    SSHSession? session = await SSH(ref: ref).planetEarth();
-    if (session != null) {
-      print(session.stdout);
-    }
-    setState(() {
-      planet = Planet.isEarth;
-    });
-  }
-
   Future<void> _playOrbit() async {
     if (orbitPlaying) {
       await orbitStop();
     } else {
       await orbitPlay();
     }
-  }
-
-  Future<void> _planetMoon() async {
-    SSHSession? session = await SSH(ref: ref).planetMoon();
-    if (session != null) {
-      print(session.stdout);
-    }
-    setState(() {
-      planet = Planet.isMoon;
-    });
   }
 
 }

@@ -2,7 +2,7 @@ import 'package:dartssh2/dartssh2.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import '../kml/NamePlaceBallon.dart';
+import '../kml/Balloon.dart';
 
 StateProvider<SSHClient?> sshClientProvider = StateProvider(
       (ref) => null,

@@ -1,11 +1,11 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class Const {
-  static const overLayImageLink = 'https://raw.githubusercontent.com/Rohit-554/LaserSlidesFlutter/master/skml.png';
+  static const overLayImageLink = 'https://raw.githubusercontent.com/Rohit-554/LaserSlidesFlutter/master/rkml.png';
   static double appBarHeight = 80;
   static double tabBarWidthDivider = 5;
-  static double longitude = 87.296992;
-  static double latitude = 23.547625;
+  static double longitude = 88.434092;
+  static double latitude = 22.572424;
   static double heading = 0.0;
   static double tilt = 0.0;
   static double range = 11;
@@ -33,24 +33,7 @@ class Const {
   static String kmlCustomFileName = 'custom_kml';
   static String dashboardBalloonFileName = 'dashboard_balloon';
   static String dashboardBalloonFileLocation = '/var/www/html/';
-  static List<String> availableLanguages = [
-    'English',
-    'Spanish',
-    'Russian',
-    'French',
-    'Greek',
-    'Swedish',
-    'German',
-  ];
-  static List<String> availableLanguageCodes = [
-    'en',
-    'es',
-    'ru',
-    'fr',
-    'el',
-    'sv',
-    'de',
-  ];
+
   static CameraPosition initialMapPosition = const CameraPosition(
     target: LatLng(51.4769, 0.0),
     zoom: 2,
