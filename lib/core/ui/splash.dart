@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:particles_flutter/particles_flutter.dart';
-import 'package:odyssey/pages/HomePage.dart';
+
+import 'HomePage.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -13,6 +16,7 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   bool _isVisible = true;
+  late Timer _blinkTimer;
 
   @override
   void initState() {
@@ -21,29 +25,28 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void _startBlinking() {
-    Future.delayed(Duration(milliseconds: 500), () {
-      setState(() {
-        _isVisible = !_isVisible;
-      });
-      _startBlinking();
+    _blinkTimer = Timer.periodic(Duration(milliseconds: 500), (timer) {
+      if (mounted) {
+        setState(() {
+          _isVisible = !_isVisible;
+        });
+      }
     });
 
     Future.delayed(const Duration(seconds: 3), () async {
-      await Navigator.pushReplacement(
-        context,
-        PageRouteBuilder(
-          transitionDuration: const Duration(milliseconds: 500),
-          pageBuilder: (_, __, ___) => const HomePage(),
-          transitionsBuilder: (_, animation, __, child) {
-            return FadeTransition(
-              opacity: animation,
-              child: child,
-            );
-          },
-        ),
-      );
+      if (mounted) {
+        await Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomePage()),
+        );
+      }
     });
+  }
 
+  @override
+  void dispose() {
+    _blinkTimer.cancel();
+    super.dispose();
   }
 
   @override
@@ -68,9 +71,7 @@ class _SplashScreenState extends State<SplashScreen> {
             isRandomColor: true,
             randColorList: [
               Colors.white.withAlpha(50),
-
               Colors.white.withAlpha(50),
-
             ],
             awayAnimationCurve: Curves.easeInOutBack,
             enableHover: true,
@@ -88,23 +89,34 @@ class _SplashScreenState extends State<SplashScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Center(
-                      child: Lottie.asset("assets/lottie/lg_balls_anim.json",
-                          width: 300, height: 300),
-                    ),
-                    AnimatedOpacity(
-                      opacity: _isVisible ? 1.0 : 0.0,
-                      duration: Duration(milliseconds: 500),
-                      child: const Text(
-                        "Initializing",
-                        style: TextStyle(color: Colors.white, fontSize: 40),
+                      child: Lottie.asset(
+                        "assets/lottie/rocket.json",
+                        width: 300,
+                        height: 300,
                       ),
                     ),
+                    SizedBox(height: 50),
                     AnimatedOpacity(
                       opacity: _isVisible ? 1.0 : 0.0,
-                      duration: Duration(milliseconds: 500),
-                      child: const Text(
-                        "Odyssey...",
-                        style: TextStyle(color: Colors.white, fontSize: 40),
+                      duration: Duration(milliseconds: 1000),
+                      child: Transform.scale(
+                        scale: _isVisible ? 1.0 : 0.0,
+                        child: Text(
+                          "Booting",
+                          style: TextStyle(color: Colors.white, fontSize: 40),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    AnimatedOpacity(
+                      opacity: _isVisible ? 1.0 : 0.0,
+                      duration: Duration(milliseconds: 1000),
+                      child: Transform.scale(
+                        scale: _isVisible ? 1.0 : 0.0,
+                        child: Text(
+                          "Odyssey...",
+                          style: TextStyle(color: Colors.white, fontSize: 40),
+                        ),
                       ),
                     ),
                   ],

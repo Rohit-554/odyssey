@@ -4,24 +4,21 @@ import 'package:dartssh2/dartssh2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:lottie/lottie.dart';
+import 'package:odyssey/core/ui/connectionScreen.dart';
 import 'package:particles_flutter/particles_flutter.dart';
-import 'package:odyssey/kml/KmlMaker.dart';
-import 'package:odyssey/pages/settings.dart';
 import 'package:odyssey/utils/extensions.dart';
-import 'package:odyssey/widget/show_connection.dart';
-
-import '../connection/SSH.dart';
-import '../kml/BaloonLoader.dart';
-import '../kml/Balloon.dart';
-import '../providers/providers.dart';
-import '../utils/constants.dart';
-import '../utils/theme.dart';
+import 'package:odyssey/core/widgets/show_connection.dart';
+import '../../connection/SSH.dart';
+import '../../kml/Balloon.dart';
+import '../kml/KmlOverlayLoader.dart';
+import '../../providers/providers.dart';
+import '../../utils/constants.dart';
+import '../../utils/theme.dart';
 
 final settingsKey = GlobalKey();
 
@@ -125,9 +122,6 @@ class _HomePageState extends ConsumerState<HomePage> with TickerProviderStateMix
 
   @override
   Widget build(BuildContext context) {
-    double screenHeight = MediaQuery.of(context).size.height;
-    double screenWidth = MediaQuery.of(context).size.width;
-    bool connected = ref.watch(connectedProvider);
     bool isConnectedToLg = ref.watch(connectedProvider);
     return Scaffold(
       appBar: AppBar(
@@ -181,8 +175,8 @@ class _HomePageState extends ConsumerState<HomePage> with TickerProviderStateMix
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          menuButton("Navigate To Kolkata", _navigateToKolkata),
-                          menuButton("play Orbit", _playOrbit),
+                          menuButton("Take me to Home", _navigateToKolkata),
+                          menuButton("Play orbit", _playOrbit),
                         ],
                       ),
                       SizedBox(height: 40),
@@ -213,8 +207,6 @@ class _HomePageState extends ConsumerState<HomePage> with TickerProviderStateMix
   @override
   void dispose() {
     _earthController.dispose();
-    _moonController.dispose();
-    _marsController.dispose();
     _searchController.dispose();
     super.dispose();
   }
@@ -286,8 +278,6 @@ class _HomePageState extends ConsumerState<HomePage> with TickerProviderStateMix
         if (ind == 1) {
           print("this is confirmed");
           _relaunchLG();
-          // _cleanKml();
-          // _cleanBalloon();
         } else if (ind == 2) {
           print("this is confirmed2");
           ref.read(connectedProvider.notifier).state = false;
@@ -314,28 +304,7 @@ class _HomePageState extends ConsumerState<HomePage> with TickerProviderStateMix
     );
   }
 
-  Future<void> _planetMars() async {
-    SSHSession? session = await SSH(ref: ref).planetMars();
-    if (session != null) {
-      print(session.stdout);
-    }
-    setState(() {
-      planet = Planet.isMars;
-    });
-  }
 
-/*  Future<void> _loadBalloon() async {
-    await BalloonLoader(ref: ref, mounted: mounted, context: context)
-        .loadDashBoardBalloon();
-    ref.read(isLoadingProvider.notifier).state = false;
-  }*/
-
- Future<void> _cleanKml() async {
-    SSHSession? session = await SSH(ref: ref).cleanKML(context);
-    if (session != null) {
-      print(session.stdout);
-    }
-  }
 
   Future<void> _showOverlay() async {
     String session = await SSH(ref: ref).renderInSlave(context, ref.read(rightmostRigProvider), KMLMakers.screenOverlayImage(
@@ -347,19 +316,7 @@ class _HomePageState extends ConsumerState<HomePage> with TickerProviderStateMix
     }
   }
 
-  Future<void> _cleanBalloon() async {
-    SSHSession? session = await SSH(ref: ref).cleanBalloon(context);
-    if (session != null) {
-      print(session.stdout);
-    }
-  }
 
-  Future<void> _execute() async {
-    SSHSession? session = await SSH(ref: ref).execute();
-    if (session != null) {
-      print(session.stdout);
-    }
-  }
 
   Future<void> _navigateToKolkata() async {
     SSHSession? session = await SSH(ref: ref).search("sec V,Kolkata");
@@ -370,12 +327,6 @@ class _HomePageState extends ConsumerState<HomePage> with TickerProviderStateMix
 
   Future<void> _relaunchLG() async {
     SSHSession? session = await SSH(ref: ref).relunchLG();
-   /* print("this is relaunched$session");
-    if (session != null) {
-      print(session.stdout);
-    }else{
-      print('Session is null');
-    }*/
   }
 
   Future<void> _playOrbit() async {

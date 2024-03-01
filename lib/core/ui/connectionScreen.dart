@@ -8,11 +8,11 @@ import 'package:dartssh2/dartssh2.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:odyssey/utils/string_constants.dart';
-import 'package:odyssey/widget/show_connection.dart';
+import 'package:odyssey/core/widgets/show_connection.dart';
 
-import '../connection/SSH.dart';
-import '../providers/providers.dart';
-import '../utils/theme.dart';
+import '../../connection/SSH.dart';
+import '../../providers/providers.dart';
+import '../../utils/theme.dart';
 
 class ConnectionScreen extends ConsumerStatefulWidget {
   const ConnectionScreen({Key? key}) : super(key: key);
@@ -36,11 +36,6 @@ class _ConnectionScreenState extends ConsumerState<ConnectionScreen> {
     portController.text = ref.read(portProvider).toString();
     rigsController.text = ref.read(rigsProvider).toString();
   }
-  /*void _doSomething() async {
-    Timer(Duration(seconds: 3), () {
-      _btnController.success();
-    });
-  }*/
 
   updateProviders() {
     ref.read(ipProvider.notifier).state = ipController.text;
@@ -55,12 +50,6 @@ class _ConnectionScreenState extends ConsumerState<ConnectionScreen> {
     ref.read(connectedProvider.notifier).state = result!;
   }
 
- /* Future<void> _execute() async {
-    SSHSession? session = await ssh.execute();
-    if (session != null) {
-      print(session.stdout);
-    }
-  }*/
 
   @override
   void initState() {
@@ -136,24 +125,6 @@ class _ConnectionScreenState extends ConsumerState<ConnectionScreen> {
     );
   }
 
-  Future<void> _cleanKml() async {
-    SSHSession? session = await SSH(ref: ref).cleanKML(context);
-    if (session != null) {
-      print(session.stdout);
-    }else{
-      print('Session is null');
-    }
-  }
-
-  Future<void> _cleanBalloon() async {
-
-    SSHSession? session = await SSH(ref: ref).cleanBalloon(context);
-    if (session != null) {
-      print(session.stdout);
-    }else{
-      print('Session is null');
-    }
-  }
 
   @override
   void dispose() {

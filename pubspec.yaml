@@ -74,9 +74,9 @@ flutter:
     - assets/images/
 
   fonts:
-    - family: VT323
+    - family: Play
       fonts:
-        - asset: assets/font/VT323-Regular.ttf
+        - asset: assets/font/Play-Bold.ttf
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

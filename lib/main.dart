@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:odyssey/pages/splash_screen.dart';
+import 'package:odyssey/core/ui/splash.dart';
 import 'package:odyssey/utils/string_constants.dart';
 import 'package:odyssey/utils/theme.dart';
 
@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: StringConstants.appName,
       theme: ThemeData(
-        fontFamily: 'VT323',
+        fontFamily: 'Play',
         hintColor: Colors.white,
         scaffoldBackgroundColor: ThemesDark().normalColor,
         inputDecorationTheme: InputDecorationTheme(
