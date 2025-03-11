@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:odyssey/core/ui/splash.dart';
+import 'package:odyssey/test.dart';
 import 'package:odyssey/utils/string_constants.dart';
 import 'package:odyssey/utils/theme.dart';
 
@@ -9,10 +10,7 @@ import 'package:odyssey/utils/theme.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft])
-      .then((_) {
-    runApp(const ProviderScope(child: MyApp()));
-  });
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -39,7 +37,12 @@ class MyApp extends StatelessWidget {
         ),
 
       ),
-      home: const SplashScreen(),
+      home:  VoiceSearchBar(
+        onSearch: (String text) {
+          print('Search text: $text');
+          // Handle the search text here
+        },
+      )
     );
   }
 }
