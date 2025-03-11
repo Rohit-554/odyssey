@@ -6,7 +6,6 @@ import 'package:flutter_animated_button/flutter_animated_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dartssh2/dartssh2.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:odyssey/utils/string_constants.dart';
 import 'package:odyssey/core/widgets/show_connection.dart';
 
@@ -27,7 +26,6 @@ class _ConnectionScreenState extends ConsumerState<ConnectionScreen> {
   TextEditingController passwordController = TextEditingController(text: '');
   TextEditingController portController = TextEditingController(text: '');
   TextEditingController rigsController = TextEditingController(text: '');
-  final RoundedLoadingButtonController _btnController = RoundedLoadingButtonController();
   late SSH ssh;
   initTextControllers() {
     ipController.text = ref.read(ipProvider);
@@ -63,12 +61,12 @@ class _ConnectionScreenState extends ConsumerState<ConnectionScreen> {
     bool isConnectedToLg = ref.watch(connectedProvider);
     return SafeArea(
       child: Scaffold(
-        appBar:  AppBar(
-            backgroundColor: ThemesDark().tabBarColor,
-            title: Text(
-              StringConstants.Settings,
-              style: TextStyle(color: ThemesDark().oppositeColor),
-            ),
+        appBar: AppBar(
+          backgroundColor: ThemesDark().tabBarColor,
+          title: Text(
+            StringConstants.Settings,
+            style: TextStyle(color: ThemesDark().oppositeColor),
+          ),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
@@ -77,35 +75,67 @@ class _ConnectionScreenState extends ConsumerState<ConnectionScreen> {
             color: ThemesDark().oppositeColor,
           ),
         ),
-
         backgroundColor: ThemesDark().normalColor,
-        body: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ShowConnection(status: isConnectedToLg),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(40),
-              child: Column(
+        // Wrap the body in a SingleChildScrollView to handle overflow
+        body: SingleChildScrollView(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              // Calculate responsive padding based on screen width
+              double horizontalPadding = constraints.maxWidth * 0.1; // 10% of screen width
+              return Column(
                 children: [
-
-                  customInput(ipController, "IP Address"),
-                  customInput(usernameController, "Username"),
-                  customInput(passwordController, "Password"),
-                  customInput(portController, "Port"),
-                  customInput(rigsController, "Rigs"),
-                  ElevatedButton(
-                    onPressed: () {
-                      updateProviders();
-                      if (!isConnectedToLg) _connectToLG();
-                    },
-                    child: Text('Connect to LG'),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ShowConnection(status: isConnectedToLg),
+                  ),
+                  Padding(
+                    // Use responsive padding
+                    padding: EdgeInsets.symmetric(
+                      horizontal: horizontalPadding,
+                      vertical: 20,
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Wrap form in a Container with max width for larger screens
+                        Container(
+                          constraints: BoxConstraints(maxWidth: 600),
+                          child: Column(
+                            children: [
+                              customInput(ipController, "IP Address"),
+                              customInput(usernameController, "Username"),
+                              customInput(passwordController, "Password"),
+                              customInput(portController, "Port"),
+                              customInput(rigsController, "Rigs"),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 20),
+                                child: SizedBox(
+                                  width: double.infinity,
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      updateProviders();
+                                      if (!isConnectedToLg) _connectToLG();
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(vertical: 12),
+                                      child: Text(
+                                        'Connect to LG',
+                                        style: TextStyle(fontSize: 16),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
-              ),
-            ),
-          ],
+              );
+            },
+          ),
         ),
       ),
     );
@@ -113,13 +143,23 @@ class _ConnectionScreenState extends ConsumerState<ConnectionScreen> {
 
   Widget customInput(TextEditingController controller, String labelText) {
     return Padding(
-      padding: const EdgeInsets.all(7),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: TextFormField(
         style: TextStyle(color: ThemesDark().oppositeColor),
         controller: controller,
         decoration: InputDecoration(
           labelText: labelText,
           labelStyle: TextStyle(color: ThemesDark().oppositeColor),
+          // Add border for better visibility
+          border: OutlineInputBorder(),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: ThemesDark().oppositeColor.withOpacity(0.3)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: ThemesDark().oppositeColor),
+          ),
+          // Add padding inside the text field
+          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         ),
       ),
     );

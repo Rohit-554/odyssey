@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:particles_flutter/particles_flutter.dart';
 
 import 'HomePage.dart';
 
@@ -56,29 +55,6 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          CircularParticle(
-            key: UniqueKey(),
-            awayRadius: 80,
-            numberOfParticles: 240,
-            speedOfParticles: 2,
-            height: screenHeight,
-            width: screenWidth,
-            onTapAnimation: true,
-            particleColor: Colors.white.withAlpha(150),
-            awayAnimationDuration: Duration(milliseconds: 600),
-            maxParticleSize: 2,
-            isRandSize: true,
-            isRandomColor: true,
-            randColorList: [
-              Colors.white.withAlpha(50),
-              Colors.white.withAlpha(50),
-            ],
-            awayAnimationCurve: Curves.easeInOutBack,
-            enableHover: true,
-            hoverColor: Colors.white.withAlpha(80),
-            hoverRadius: 90,
-            connectDots: false, //not recommended
-          ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

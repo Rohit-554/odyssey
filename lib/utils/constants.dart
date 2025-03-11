@@ -1,7 +1,7 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class Const {
-  static const overLayImageLink = 'https://raw.githubusercontent.com/Rohit-554/LaserSlidesFlutter/master/rkml.png';
+  static const overLayImageLink = 'https://raw.githubusercontent.com/Rohit-554/odyssey/refs/heads/master/ballon.png';
   static double appBarHeight = 80;
   static double tabBarWidthDivider = 5;
   static double longitude = 88.434092;
